@@ -12,12 +12,11 @@ Course project for CSE 573 - Computer Vision and Image Processing,
 University at Buffalo, Spring 2025. Full write-up in
 [`docs/CVIP_final_report.pdf`](docs/CVIP_final_report.pdf).
 
-![Pedestrian intent prediction on a CARLA Town01 sequence](outputs/real_run/intent_tracker.gif)
+![Pedestrian intent tracking on a CARLA Town01 sequence](outputs/real_run/intent_tracker.gif)
 
-*Pipeline output on a real CARLA Town01 sequence (ego-vehicle view): one
-pedestrian crossing the plaza (green) and one standing still (red). Each
-tracked pedestrian is classified from its motion - green = moving/crossing,
-red = stationary.*
+*Pipeline output on a real CARLA Town01 sequence (ego-vehicle view). Each
+tracked pedestrian gets a track ID and a short-term intent label - green =
+moving, red = stationary - with its pixel speed.*
 
 ## Pipeline
 
@@ -93,6 +92,7 @@ two streams aligned.
 |-- docs/
 |   |-- DEMO.md                      # Synthetic-demo run instructions
 |   |-- REAL_DATA_RESULTS.md         # Real CARLA-run numbers and caveats
+|   |-- figures/                     # Result figures used in the README
 |   `-- CVIP_final_report.pdf        # Full course report
 `-- outputs/
     |-- demo/                        # Synthetic demo outputs (committed)
@@ -196,6 +196,21 @@ the complete evaluation.
 - **Ego-motion**: intent is measured in pixel space, so a moving camera
   adds apparent motion to static pedestrians (see the ego-motion caveat
   in the real-data notes).
+
+## Example results
+
+Intent predictions from the full-dataset run in the report - a stationary
+pedestrian (red) and a crossing pedestrian (green), each labelled with its
+pixel speed:
+
+<p align="center">
+  <img src="docs/figures/intent_stationary.png" height="300" alt="Stationary pedestrian (#750 stationary 0.0px/f)" />
+  <img src="docs/figures/intent_moving.png" height="300" alt="Crossing pedestrian (moving 12.68px/f)" />
+</p>
+
+The same classifier running across a full street scene:
+
+![Intent prediction across a CARLA Town01 street scene](docs/figures/intent_scene.jpg)
 
 ## Getting CARLA data
 
