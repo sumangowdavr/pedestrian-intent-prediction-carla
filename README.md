@@ -12,10 +12,11 @@ Course project for CSE 573 - Computer Vision and Image Processing,
 University at Buffalo, Spring 2025. Full write-up in
 [`docs/CVIP_final_report.pdf`](docs/CVIP_final_report.pdf).
 
-![Intent prediction output: tracked pedestrians labelled moving/stationary](outputs/demo/sample_frames/tracker_frame_0020.png)
+![Pedestrian intent tracking on a CARLA Town01 sequence](outputs/real_run/intent_tracker.gif)
 
-*Pipeline output: each tracked pedestrian gets a track ID and a short-term
-intent label - green = moving, red = stationary - with its pixel speed.*
+*Pipeline output on a real CARLA Town01 sequence (ego-vehicle view). Each
+tracked pedestrian gets a track ID and a short-term intent label - green =
+moving, red = stationary - with its pixel speed.*
 
 ## Pipeline
 
