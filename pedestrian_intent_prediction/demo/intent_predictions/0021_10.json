@@ -1,0 +1,49 @@
+{
+  "frame": "0021_10",
+  "predictions": [
+    {
+      "track_id": 0,
+      "bbox": [
+        238,
+        168,
+        262,
+        240
+      ],
+      "speed": 10.0,
+      "intent": "moving"
+    },
+    {
+      "track_id": 1,
+      "bbox": [
+        408,
+        144,
+        432,
+        216
+      ],
+      "speed": 6.0,
+      "intent": "moving"
+    },
+    {
+      "track_id": 2,
+      "bbox": [
+        668,
+        88,
+        692,
+        160
+      ],
+      "speed": 0.0,
+      "intent": "stationary"
+    },
+    {
+      "track_id": 3,
+      "bbox": [
+        260,
+        88,
+        284,
+        160
+      ],
+      "speed": 12.0,
+      "intent": "moving"
+    }
+  ]
+}

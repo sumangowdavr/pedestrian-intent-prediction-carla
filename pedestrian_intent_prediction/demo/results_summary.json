@@ -1,0 +1,26 @@
+{
+  "tracker_based": {
+    "files": 30,
+    "total_preds": 120,
+    "correct": 117,
+    "accuracy": 0.975,
+    "confusion": {
+      "gt=moving,pred=moving": 72,
+      "gt=moving,pred=stationary": 3,
+      "gt=stationary,pred=moving": 0,
+      "gt=stationary,pred=stationary": 45
+    }
+  },
+  "flow_based": {
+    "files": 29,
+    "total_preds": 116,
+    "correct": 116,
+    "accuracy": 1.0,
+    "confusion": {
+      "gt=moving,pred=moving": 72,
+      "gt=moving,pred=stationary": 0,
+      "gt=stationary,pred=moving": 0,
+      "gt=stationary,pred=stationary": 44
+    }
+  }
+}
