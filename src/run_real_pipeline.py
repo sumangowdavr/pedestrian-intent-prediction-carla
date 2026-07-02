@@ -175,11 +175,14 @@ def merge(rgb_paths, yolo_dir: Path, ss_dir: Path, out_json_dir: Path,
         cv2.imwrite(str(out_img_dir / f"{stem}.png"), img)
 
 
+REPO_ROOT = Path(__file__).resolve().parent.parent
+
+
 def parse_args():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--rgb_root", type=Path, default=Path("data/images_rgb"))
-    ap.add_argument("--ss_root",  type=Path, default=Path("data/images_ss"))
-    ap.add_argument("--out_root", type=Path, default=Path("real_run"))
+    ap.add_argument("--rgb_root", type=Path, default=REPO_ROOT / "data/images_rgb")
+    ap.add_argument("--ss_root",  type=Path, default=REPO_ROOT / "data/images_ss")
+    ap.add_argument("--out_root", type=Path, default=REPO_ROOT / "outputs/real_run")
     ap.add_argument("--start", type=int, default=1539)
     ap.add_argument("--count", type=int, default=65)
     ap.add_argument("--suffix", type=str, default="0")

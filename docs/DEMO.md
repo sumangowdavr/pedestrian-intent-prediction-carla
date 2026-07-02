@@ -4,39 +4,42 @@ The main pipeline needs CARLA RGB/SS frames and YOLO weights. This
 self-contained demo runs end-to-end with only `opencv-python`, `numpy`,
 and `tqdm` (plus optional PIL for the animated GIF).
 
+Run everything from the repo root - the scripts figure out their own
+default paths (`outputs/demo/*`).
+
 ## Quick start
 
 ```bash
 # 1) Generate synthetic frames + ground-truth boxes
-python3 generate_demo.py --out_dir demo --num_frames 30
+python src/generate_demo.py
 
 # 2a) Flow-based intent (Farneback optical flow inside each bbox)
-python3 intent_flow.py \
-    --img_dir demo/merged_images \
-    --json_dir demo/merged_detections \
-    --out_json_dir demo/intent_with_flow \
-    --viz_dir demo/merged_visual_flow_final \
+python src/intent_flow.py \
+    --img_dir outputs/demo/merged_images \
+    --json_dir outputs/demo/merged_detections \
+    --out_json_dir outputs/demo/intent_with_flow \
+    --viz_dir outputs/demo/merged_visual_flow_final \
     --flow_thresh 0.5
 
 # 2b) Tracker-based intent (IoU association + pixel-speed)
-python3 intent_tracker.py \
-    --merged_dir demo/merged_detections \
-    --out_dir demo/intent_predictions \
+python src/intent_tracker.py \
+    --merged_dir outputs/demo/merged_detections \
+    --out_dir outputs/demo/intent_predictions \
     --iou_thresh 0.3 --speed_thresh 2.0
 
-python3 visualize_intent.py \
-    --img_dir demo/merged_images \
-    --intent_dir demo/intent_predictions \
-    --out_dir demo/merged_visual_intent_final
+python src/visualize_intent.py \
+    --img_dir outputs/demo/merged_images \
+    --intent_dir outputs/demo/intent_predictions \
+    --out_dir outputs/demo/merged_visual_intent_final
 
 # 3) Stitch into a video / GIF
-python3 make_demo_video.py \
-    --frames_dir demo/merged_visual_intent_final \
-    --out_mp4 demo/intent_demo.mp4 \
-    --out_gif demo/intent_demo.gif --fps 6
+python src/make_demo_video.py \
+    --frames_dir outputs/demo/merged_visual_intent_final \
+    --out_mp4 outputs/demo/intent_demo.mp4 \
+    --out_gif outputs/demo/intent_demo.gif --fps 6
 
 # 4) Evaluate vs known ground truth
-python3 evaluate_demo.py --num_frames 30
+python src/evaluate_demo.py
 ```
 
 ## Demo scene
@@ -52,7 +55,7 @@ Every frame contains four "pedestrian" rectangles:
 
 ## Latest run
 
-Numbers from `demo/results_summary.json`:
+Numbers from `outputs/demo/results_summary.json`:
 
 | method          | frames | preds | correct | accuracy |
 |-----------------|--------|-------|---------|----------|

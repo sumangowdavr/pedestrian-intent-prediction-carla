@@ -17,21 +17,21 @@ env/
 # Raw CARLA dataset (hundreds of MB); users download separately
 /data/
 
-# Left-over from the pre-flatten layout; the subdir keeps venv + weights + demo cache locally
+# Left over from the pre-flatten layout; still holds local venv + weights + data
 pedestrian_intent_prediction/
 
 # Regenerable intermediate outputs (kept locally, not committed)
-demo/merged_images/
-demo/merged_visual_flow_final/
-demo/merged_visual_intent_final/
-demo/*.gif
+outputs/demo/merged_images/
+outputs/demo/merged_visual_flow_final/
+outputs/demo/merged_visual_intent_final/
+outputs/demo/*.gif
 
-real_run/merged_img/
-real_run/vis_flow/
-real_run/vis_tracker/
-real_run_sanity/
+outputs/real_run/merged_img/
+outputs/real_run/vis_flow/
+outputs/real_run/vis_tracker/
+outputs/real_run_sanity/
 
-# YOLO training run artifacts
+# YOLO training-run artifacts
 runs/
 
 # IDE / OS junk

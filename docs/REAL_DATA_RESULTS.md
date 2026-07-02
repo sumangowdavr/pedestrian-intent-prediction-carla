@@ -2,8 +2,8 @@
 
 This is a real end-to-end run of the pipeline on the CARLA Town01 slice
 placed under `data/{images_rgb,images_ss}` (1392x1024, `_N`/`_N+10`
-naming convention). Contrast with the `demo/` folder, which uses
-synthetic frames for pipeline validation only.
+naming convention). Contrast with `outputs/demo/`, which uses synthetic
+frames for pipeline validation only.
 
 ## Slice and settings
 
@@ -25,7 +25,7 @@ this specific slice, pedestrians are far from the ego vehicle (single-
 digit pixels wide), so `MIN_AREA=20`/`MIN_H=8`/`MORPH_OPEN` erased them.
 The relaxed defaults live in `run_real_pipeline.py::ss_detect`.
 
-## Aggregate results (`real_run/results_summary.json`)
+## Aggregate results (`outputs/real_run/results_summary.json`)
 
 | stage                       | count |
 |-----------------------------|-------|
@@ -64,15 +64,16 @@ The relaxed defaults live in `run_real_pipeline.py::ss_detect`.
 From the repository root:
 
 ```bash
-python3 run_real_pipeline.py \
-    --rgb_root data/images_rgb \
-    --ss_root  data/images_ss \
+python src/run_real_pipeline.py \
     --start 1644 --count 23 --suffix 0 \
-    --yolo_weights yolov8s.pt --yolo_imgsz 640 \
-    --out_root real_run
+    --yolo_weights yolov8s.pt --yolo_imgsz 640
 ```
 
-Assets in `real_run/`:
+The script's default `--rgb_root data/images_rgb`, `--ss_root data/images_ss`,
+and `--out_root outputs/real_run` all resolve against the repo root, so
+the invocation above is enough as long as your data lives in `data/`.
+
+Assets in `outputs/real_run/`:
 
 - `detect_merge.mp4`      YOLO (green) + SS-only (red) overlays
 - `intent_tracker.mp4`    tracker-based intent overlays

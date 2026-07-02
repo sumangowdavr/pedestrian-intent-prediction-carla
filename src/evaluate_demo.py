@@ -49,12 +49,18 @@ def eval_dir(pred_dir: Path, num_frames: int, key: str):
             "accuracy": round(acc, 4), "confusion": {f"gt={k[0]},pred={k[1]}": v for k, v in conf.items()}}
 
 
+REPO_ROOT = Path(__file__).resolve().parent.parent
+
+
 def main():
     ap = argparse.ArgumentParser(description="Evaluate demo intent predictions")
-    ap.add_argument("--tracker_dir", type=Path, default=Path("demo/intent_predictions"))
-    ap.add_argument("--flow_dir", type=Path, default=Path("demo/intent_with_flow"))
+    ap.add_argument("--tracker_dir", type=Path,
+                    default=REPO_ROOT / "outputs/demo/intent_predictions")
+    ap.add_argument("--flow_dir", type=Path,
+                    default=REPO_ROOT / "outputs/demo/intent_with_flow")
     ap.add_argument("--num_frames", type=int, default=30)
-    ap.add_argument("--out", type=Path, default=Path("demo/results_summary.json"))
+    ap.add_argument("--out", type=Path,
+                    default=REPO_ROOT / "outputs/demo/results_summary.json")
     args = ap.parse_args()
 
     summary = {

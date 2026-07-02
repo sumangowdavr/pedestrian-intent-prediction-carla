@@ -66,9 +66,12 @@ def frame_id(i):
     return f"{i:04d}_10"
 
 
+REPO_ROOT = Path(__file__).resolve().parent.parent
+
+
 def main():
     ap = argparse.ArgumentParser(description="Generate synthetic intent-prediction demo")
-    ap.add_argument("--out_dir", type=Path, default=Path("demo"))
+    ap.add_argument("--out_dir", type=Path, default=REPO_ROOT / "outputs/demo")
     ap.add_argument("--num_frames", type=int, default=30)
     ap.add_argument("--width", type=int, default=800)
     ap.add_argument("--height", type=int, default=400)
