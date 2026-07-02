@@ -18,6 +18,10 @@ University at Buffalo, Spring 2025. Full write-up in
 tracked pedestrian gets a track ID and a short-term intent label - green =
 moving, red = stationary - with its pixel speed.*
 
+> **Animated overview:** a one-page walkthrough of the whole pipeline is in
+> [`docs/figures/project_explainer.gif`](docs/figures/project_explainer.gif)
+> (lightweight [`.mp4`](docs/figures/project_explainer.mp4) for web embedding).
+
 ## Pipeline
 
 ```
