@@ -1,19 +1,21 @@
-# Pedestrian Intent Prediction on CARLA Town01
+# Vision-Based Pedestrian Intention Prediction for Autonomous Navigation
 
-Vision-based pedestrian detection + short-term intent (moving /
-stationary) on synthetic CARLA driving data. Combines a **YOLOv8** RGB
-detector with a **semantic-segmentation** fallback to recover
-small/occluded pedestrians, then classifies each track as moving or
-stationary using either dense optical flow or IoU-based centroid speed.
+Detect pedestrians and estimate their short-term motion behaviour (moving
+/ stationary) from synthetic urban driving data generated with the
+**CARLA** simulator (Town01). A **YOLOv8** RGB detector is paired with a
+**semantic-segmentation** fallback to recover the small/occluded
+pedestrians YOLO misses, the two streams are merged by IoU, and each
+tracked pedestrian is classified as moving or stationary using either
+dense optical flow or IoU-based centroid speed.
 
 Course project for CSE 573 - Computer Vision and Image Processing,
 University at Buffalo, Spring 2025. Full write-up in
 [`docs/CVIP_final_report.pdf`](docs/CVIP_final_report.pdf).
 
-![Tracker output on a real CARLA Town01 frame](outputs/real_run/sample_frames/tracker_frame_1650.png)
+![Intent prediction output: tracked pedestrians labelled moving/stationary](outputs/demo/sample_frames/tracker_frame_0020.png)
 
-*Tracker output on real CARLA Town01 data. Each pedestrian gets a track ID and
-a short-term intent label - green = moving, red = stationary - with pixel speed.*
+*Pipeline output: each tracked pedestrian gets a track ID and a short-term
+intent label - green = moving, red = stationary - with its pixel speed.*
 
 ## Pipeline
 
@@ -38,6 +40,33 @@ a short-term intent label - green = moving, red = stationary - with pixel speed.
 
 Each stage writes per-frame JSON, so you can plug in your own detector
 or intent classifier at any point.
+
+## Approach
+
+Following the report, the pipeline is built in four parts:
+
+1. **RGB detection** - YOLOv8 (large model) run on enhanced frames.
+   Pre-processing: CLAHE in LAB space, gamma correction (γ = 1.3), a 3×3
+   sharpening kernel, and bilateral filtering. Detection uses a
+   confidence threshold of 0.25, an IoU/NMS threshold of 0.45, and
+   test-time augmentation (horizontal flips + scaling).
+2. **Semantic-segmentation detection** - CARLA paints pedestrians a fixed
+   red, so a colour threshold (with tolerance) + morphological
+   close/open + connected-components analysis recovers pixel-accurate
+   boxes for pedestrians YOLO misses (small, distant, or occluded).
+3. **Merging** - for each frame the YOLO and SS boxes are compared by
+   Intersection-over-Union; any SS box that does not overlap a YOLO box
+   (IoU < 0.5) is added as a previously missed pedestrian.
+4. **Intent prediction** - two interchangeable classifiers:
+   - *Optical flow*: dense Farneback flow between consecutive frames;
+     mean flow magnitude inside each box above **0.5 px/frame** ⇒ moving.
+   - *Tracker*: an IoU tracker assigns track IDs, and per-track centroid
+     pixel speed above a threshold ⇒ moving.
+
+**Data.** RGB + semantic-segmentation frames from CARLA Town01, captured
+by two synchronised cameras on a moving vehicle at 1392×1024, 72° FoV,
+10 Hz. Paired filenames (`XXXX_0.png` RGB ↔ `XXXX_10.png` SS) keep the
+two streams aligned.
 
 ## Repository layout
 
@@ -146,6 +175,26 @@ Results from the committed run on 23 Town01 frames
 
 Full commentary (including the ego-motion caveat): [`docs/REAL_DATA_RESULTS.md`](docs/REAL_DATA_RESULTS.md).
 
+### Detection at scale
+
+Across the full Town01 collection the RGB+SS detector was run on **10,000
+frames** and found pedestrians in **8,979** of them (**12,310** total
+pedestrians), for roughly **73% detection accuracy** - see the report for
+the complete evaluation.
+
+### Known limitations
+
+- **Small / distant pedestrians** only span a few pixels and are the main
+  source of missed detections; the SS fallback recovers many but not all.
+- **Vertical high-contrast objects** - dustbins, poles, and thin
+  tree trunks - can be misclassified as pedestrians by the RGB detector.
+  You will see this in the raw real-run frames (a roadside dustbin picked
+  up as a stationary "pedestrian"); tightening the confidence threshold
+  or adding an SS-mask cross-check reduces it.
+- **Ego-motion**: intent is measured in pixel space, so a moving camera
+  adds apparent motion to static pedestrians (see the ego-motion caveat
+  in the real-data notes).
+
 ## Getting CARLA data
 
 - **KITTI-CARLA** pre-recorded dataset (fastest way to get started with
@@ -155,15 +204,21 @@ Full commentary (including the ego-motion caveat): [`docs/REAL_DATA_RESULTS.md`]
 - **CARLA simulator**, pre-built Linux release:
   https://github.com/carla-simulator/carla/releases
 
-## Prior work
+## References
 
-- **CARLA simulator**: Dosovitskiy et al., *CARLA: An Open Urban Driving
-  Simulator*, CoRL 2017.
-- **YOLOv8**: Ultralytics, https://github.com/ultralytics/ultralytics
-- **Farneback dense flow**: Farneback, *Two-Frame Motion Estimation
-  Based on Polynomial Expansion*, SCIA 2003.
+The full reference list from the report:
 
-Full reference list in the report.
+- Dosovitskiy et al., *CARLA: An Open Urban Driving Simulator*, CoRL 2017.
+- Rasouli, Kotseruba & Tsotsos, *Pedestrian Action and Intention
+  Recognition: A Visual Perspective*, IEEE ITSC 2019.
+- Ultralytics, *YOLOv8 Object Detection Models*, GitHub 2023 -
+  https://github.com/ultralytics/ultralytics
+- Farnebäck, *Two-Frame Motion Estimation Based on Polynomial Expansion*,
+  SCIA 2003.
+- Zhang et al., *Exploring CARLA for Semantic Segmentation: Benchmarks and
+  Challenges*, IEEE IV 2021.
+- CARLA-KITTI synthetic-data generators: fnozarian/CARLA-KITTI and
+  jedeschaud/kitti_carla_simulator (arXiv:2109.00892).
 
 ## License
 
