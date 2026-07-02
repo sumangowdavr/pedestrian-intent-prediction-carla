@@ -1,18 +1,11 @@
 #!/usr/bin/env python3
-"""
-merge_detections.py
 
-Grad-Capstone Project
-– Takes your YOLO detections + semantic-segmentation detections
-– Merges any SS-only boxes into the RGB frames
-– Draws YOLO in green, SS-only in red
-– Saves merged JSON, merged image, and crops of SS-only misses
-– Produces merged_summary.csv
-"""
 
 #### IMPORTS ##############################################
+import argparse
 import json
 import csv
+import os
 import time
 from pathlib import Path
 
@@ -21,29 +14,21 @@ import numpy as np
 from tqdm import tqdm
 
 #### CONFIGURATION #######################################
-# where your raw RGB frames live
-IMG_RGB_DIR    = Path(
-    r"C:\Users\Sumangowda\Desktop\CVIP_project\pedestrian_intent_prediction"
-    r"\data\Town01\Town01\generated\images_rgb"
+# defaults; override via CLI or env vars
+DEFAULT_RGB_DIR = os.environ.get(
+    "RGB_DIR",
+    "data/Town01/Town01/generated/images_rgb",
 )
-# where your per-frame YOLO pedestrian JSONs are
+IMG_RGB_DIR    = Path(DEFAULT_RGB_DIR)
 YOLO_JSON_DIR  = Path("detections")
-# where your per-frame SS pedestrian JSONs are
 SS_JSON_DIR    = Path("semantic_pedestrian_detections")
-# fallback to these annotated PNGs if raw RGB missing
 ANNOTATED_DIR  = YOLO_JSON_DIR / "annotated"
 
-# output folders
 OUT_JSON_DIR   = Path("merged_detections")
 OUT_IMG_DIR    = Path("merged_images")
 OUT_CROP_DIR   = Path("crops_missing")
 
-# minimum IoU to consider “same” pedestrian
 IOU_THRESH     = 0.5
-
-# ensure outputs exist
-for d in (OUT_JSON_DIR, OUT_IMG_DIR, OUT_CROP_DIR):
-    d.mkdir(parents=True, exist_ok=True)
 
 #### UTILITIES ###########################################
 def compute_iou(boxA, boxB):
@@ -63,7 +48,31 @@ def compute_iou(boxA, boxB):
     return inter / union if union > 0 else 0.0
 
 #### MAIN MERGE LOOP ####################################
+def parse_args():
+    ap = argparse.ArgumentParser(description="Merge YOLO + SS pedestrian detections")
+    ap.add_argument("--rgb_dir", type=Path, default=IMG_RGB_DIR,
+                    help="Directory with raw RGB frames")
+    ap.add_argument("--yolo_dir", type=Path, default=YOLO_JSON_DIR,
+                    help="Directory with YOLO detection JSONs")
+    ap.add_argument("--ss_dir", type=Path, default=SS_JSON_DIR,
+                    help="Directory with SS detection JSONs")
+    ap.add_argument("--iou_thresh", type=float, default=IOU_THRESH,
+                    help="IoU threshold for detection matching")
+    return ap.parse_args()
+
+
 def main():
+    global IMG_RGB_DIR, YOLO_JSON_DIR, SS_JSON_DIR, ANNOTATED_DIR, IOU_THRESH
+    args = parse_args()
+    IMG_RGB_DIR   = args.rgb_dir
+    YOLO_JSON_DIR = args.yolo_dir
+    SS_JSON_DIR   = args.ss_dir
+    ANNOTATED_DIR = YOLO_JSON_DIR / "annotated"
+    IOU_THRESH    = args.iou_thresh
+
+    for d in (OUT_JSON_DIR, OUT_IMG_DIR, OUT_CROP_DIR):
+        d.mkdir(parents=True, exist_ok=True)
+
     start_time = time.time()
     summary = []
 
@@ -152,33 +161,33 @@ def main():
 
 
     #### LEGACY / FAILED ATTEMPTS (commented out) ###########
-    """
-    # --- Attempt #1: direct imread of SS-suffixed RGB frames (didn’t work) ---
-    # img_fail = cv2.imread(str(IMG_RGB_DIR / f"{prefix}_{int(suffix)+10}.png"))
-    # if img_fail is None:
-    #     print(f"[WARN] Missing SS RGB frame for {frame}")
+    # """
+    # # --- Attempt #1: direct imread of SS-suffixed RGB frames (didn’t work) ---
+    # # img_fail = cv2.imread(str(IMG_RGB_DIR / f"{prefix}_{int(suffix)+10}.png"))
+    # # if img_fail is None:
+    # #     print(f"[WARN] Missing SS RGB frame for {frame}")
 
-    # --- Attempt #2: warning missing SS detection JSON ---
-    # if not ss_json_path.exists():
-    #     print(f"[WARNING] Missing SS detection JSON for {ss_frame}, skipping.")
+    # # --- Attempt #2: warning missing SS detection JSON ---
+    # # if not ss_json_path.exists():
+    # #     print(f"[WARNING] Missing SS detection JSON for {ss_frame}, skipping.")
 
-    # --- Attempt #3: brute-force prefix matching rglob (too slow) ---
-    # for f in IMG_RGB_DIR.rglob("*.png"):
-    #     if frame in f.stem:
-    #         img = cv2.imread(str(f)); break
+    # # --- Attempt #3: brute-force prefix matching rglob (too slow) ---
+    # # for f in IMG_RGB_DIR.rglob("*.png"):
+    # #     if frame in f.stem:
+    # #         img = cv2.imread(str(f)); break
 
-    # --- Attempt #4: merge via simple bbox union (duplicates!) ---
-    # def merge_boxes(a, b):
-    #     return [min(a[0],b[0]), min(a[1],b[1]), max(a[2],b[2]), max(a[3],b[3])]
-    # merged_boxes = []
-    # for y in yboxes:
-    #     for s in missing:
-    #         if compute_iou(y,s["bbox"])>0.3:
-    #             merged_boxes.append(merge_boxes(y, s["bbox"]))
+    # # --- Attempt #4: merge via simple bbox union (duplicates!) ---
+    # # def merge_boxes(a, b):
+    # #     return [min(a[0],b[0]), min(a[1],b[1]), max(a[2],b[2]), max(a[3],b[3])]
+    # # merged_boxes = []
+    # # for y in yboxes:
+    # #     for s in missing:
+    # #         if compute_iou(y,s["bbox"])>0.3:
+    # #             merged_boxes.append(merge_boxes(y, s["bbox"]))
 
-    # --- Attempt #5: filtering out “bins” by area threshold (killed small peds) ---
-    # filtered = [d for d in yolo_peds if d["area"]>50]
-    """
+    # # --- Attempt #5: filtering out “bins” by area threshold (killed small peds) ---
+    # # filtered = [d for d in yolo_peds if d["area"]>50]
+    # """
     # 10) write summary CSV
     with open("merged_summary.csv", "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=["frame","yolo","ss_only","total"])

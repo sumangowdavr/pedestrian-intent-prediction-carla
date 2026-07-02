@@ -177,8 +177,8 @@ def merge(rgb_paths, yolo_dir: Path, ss_dir: Path, out_json_dir: Path,
 
 def parse_args():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--rgb_root", type=Path, default=Path("../data/images_rgb"))
-    ap.add_argument("--ss_root",  type=Path, default=Path("../data/images_ss"))
+    ap.add_argument("--rgb_root", type=Path, default=Path("data/images_rgb"))
+    ap.add_argument("--ss_root",  type=Path, default=Path("data/images_ss"))
     ap.add_argument("--out_root", type=Path, default=Path("real_run"))
     ap.add_argument("--start", type=int, default=1539)
     ap.add_argument("--count", type=int, default=65)
@@ -227,11 +227,12 @@ def main():
     #    - reuse merged_img itself but reset filename mapping:
     #      merged_img filenames use RGB stem (e.g. 1539_0.png)
 
+    here = Path(__file__).resolve().parent
     # 5) Flow-based intent
     intent_flow = args.out_root / "intent_flow"
     vis_flow    = args.out_root / "vis_flow"
     subprocess.check_call([
-        sys.executable, "intent_prediction.py",
+        sys.executable, str(here / "intent_flow.py"),
         "--img_dir", str(merged_img),
         "--json_dir", str(merged_json),
         "--out_json_dir", str(intent_flow),
@@ -239,10 +240,10 @@ def main():
         "--flow_thresh", str(args.flow_thresh),
     ])
 
-    # 6) Tracker-based intent (root script)
+    # 6) Tracker-based intent
     intent_tr = args.out_root / "intent_tracker"
     subprocess.check_call([
-        sys.executable, "../intent_prediction.py",
+        sys.executable, str(here / "intent_tracker.py"),
         "--merged_dir", str(merged_json),
         "--out_dir", str(intent_tr),
         "--iou_thresh", "0.3",
@@ -252,7 +253,7 @@ def main():
     # 7) Tracker-based viz
     vis_tr = args.out_root / "vis_tracker"
     subprocess.check_call([
-        sys.executable, "visualize_intent.py",
+        sys.executable, str(here / "visualize_intent.py"),
         "--img_dir", str(merged_img),
         "--intent_dir", str(intent_tr),
         "--out_dir", str(vis_tr),

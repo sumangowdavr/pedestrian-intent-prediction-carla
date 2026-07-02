@@ -1,3 +1,4 @@
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
@@ -7,59 +8,31 @@ venv/
 env/
 .env
 
-# large weight files
+# ML weights - too large; users download separately
 *.pt
 *.pth
 *.h5
 *.onnx
 
-# huge intermediate outputs at repo root
-/detections/
-/semantic_pedestrian_detection/
-/semantic_pedestrian_detections/
-/merged_detections/
-/merged_images/
-/merged_visual_intent_final/
-/merged_visual_flow_final/
-/intent_predictions/
-/intent_with_flow/
-/crops_missing/
-/enhanced_results/
+# Raw CARLA dataset (hundreds of MB); users download separately
+/data/
 
-# and the same set under the subproject (but NOT the demo/ subdirectory)
-pedestrian_intent_prediction/detections/
-pedestrian_intent_prediction/semantic_pedestrian_detection/
-pedestrian_intent_prediction/semantic_pedestrian_detections/
-pedestrian_intent_prediction/merged_detections/
-pedestrian_intent_prediction/merged_images/
-pedestrian_intent_prediction/merged_visual_intent_final/
-pedestrian_intent_prediction/merged_visual_flow_final/
-pedestrian_intent_prediction/intent_predictions/
-pedestrian_intent_prediction/intent_with_flow/
-pedestrian_intent_prediction/crops_missing/
-pedestrian_intent_prediction/enhanced_results/
+# Left-over from the pre-flatten layout; the subdir keeps venv + weights + demo cache locally
+pedestrian_intent_prediction/
 
-# YOLO training run artifacts (models, checkpoints)
-runs/detect/train*/weights/
-pedestrian_intent_prediction/runs/detect/train*/weights/
+# Regenerable intermediate outputs (kept locally, not committed)
+demo/merged_images/
+demo/merged_visual_flow_final/
+demo/merged_visual_intent_final/
+demo/*.gif
 
-# demo intermediate directories - kept locally, regenerable via scripts
-pedestrian_intent_prediction/demo/merged_images/
-pedestrian_intent_prediction/demo/merged_visual_flow_final/
-pedestrian_intent_prediction/demo/merged_visual_intent_final/
-# GIFs are too large for git; MP4s are kept
-pedestrian_intent_prediction/demo/*.gif
+real_run/merged_img/
+real_run/vis_flow/
+real_run/vis_tracker/
+real_run_sanity/
 
-# real-data run: keep videos, summary, per-frame JSONs, samples;
-# skip the giant intermediate PNG folders
-pedestrian_intent_prediction/real_run/merged_img/
-pedestrian_intent_prediction/real_run/vis_flow/
-pedestrian_intent_prediction/real_run/vis_tracker/
-pedestrian_intent_prediction/real_run_sanity/
-
-# raw CARLA input data (many hundreds of MB)
-/data/images_rgb/
-/data/images_ss/
+# YOLO training run artifacts
+runs/
 
 # IDE / OS junk
 .vscode/

@@ -1,7 +1,7 @@
 # Real-Data Run on CARLA Town01
 
 This is a real end-to-end run of the pipeline on the CARLA Town01 slice
-you dropped into `../data/{images_rgb,images_ss}` (1392x1024, `_N`/`_N+10`
+placed under `data/{images_rgb,images_ss}` (1392x1024, `_N`/`_N+10`
 naming convention). Contrast with the `demo/` folder, which uses
 synthetic frames for pipeline validation only.
 
@@ -61,12 +61,12 @@ The relaxed defaults live in `run_real_pipeline.py::ss_detect`.
 
 ## Regenerate
 
-From `pedestrian_intent_prediction/`:
+From the repository root:
 
 ```bash
 python3 run_real_pipeline.py \
-    --rgb_root ../data/images_rgb \
-    --ss_root  ../data/images_ss \
+    --rgb_root data/images_rgb \
+    --ss_root  data/images_ss \
     --start 1644 --count 23 --suffix 0 \
     --yolo_weights yolov8s.pt --yolo_imgsz 640 \
     --out_root real_run
