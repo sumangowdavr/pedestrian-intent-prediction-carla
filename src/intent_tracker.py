@@ -14,15 +14,7 @@ from pathlib import Path
 import numpy as np
 from tqdm import tqdm
 
-
-def iou(a, b):
-    xA, yA = max(a[0], b[0]), max(a[1], b[1])
-    xB, yB = min(a[2], b[2]), min(a[3], b[3])
-    inter = max(0, xB - xA) * max(0, yB - yA)
-    areaA = (a[2] - a[0]) * (a[3] - a[1])
-    areaB = (b[2] - b[0]) * (b[3] - b[1])
-    union = areaA + areaB - inter
-    return inter / union if union > 0 else 0.0
+from common import compute_iou
 
 
 def run(merged_dir: Path, out_dir: Path, iou_thresh: float, speed_thresh: float):
@@ -50,7 +42,7 @@ def run(merged_dir: Path, out_dir: Path, iou_thresh: float, speed_thresh: float)
             for tid, info in tracks.items():
                 if info["last_frame"] == frame or tid in used_tracks:
                     continue
-                i = iou(bb, info["bbox"])
+                i = compute_iou(bb, info["bbox"])
                 if i > best_iou:
                     best_iou = i
                     best_tid = tid

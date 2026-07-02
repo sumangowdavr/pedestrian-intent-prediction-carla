@@ -40,3 +40,6 @@ runs/
 .DS_Store
 # LibreOffice lock files
 .~lock.*#
+
+# Editable report source; the committed PDF is the shareable version
+docs/*.docx

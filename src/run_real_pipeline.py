@@ -19,7 +19,6 @@ Produces:
 
 import argparse
 import json
-import shutil
 import subprocess
 import sys
 import time
@@ -28,6 +27,8 @@ from pathlib import Path
 import cv2
 import numpy as np
 from tqdm import tqdm
+
+from common import compute_iou, enhance_image
 
 
 def collect_slice(rgb_root: Path, ss_root: Path, start: int, count: int, suffix: str):
@@ -39,20 +40,6 @@ def collect_slice(rgb_root: Path, ss_root: Path, start: int, count: int, suffix:
         if rgb.exists() and ss.exists():
             pairs.append((rgb, ss))
     return pairs
-
-
-def enhance_image(img):
-    lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
-    l, a, b = cv2.split(lab)
-    cl = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8)).apply(l)
-    lab = cv2.merge((cl, a, b))
-    img = cv2.cvtColor(lab, cv2.COLOR_LAB2BGR)
-    invG = 1.0 / 1.3
-    table = np.array([((i / 255.0) ** invG) * 255 for i in np.arange(256)]).astype("uint8")
-    img = cv2.LUT(img, table)
-    kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]])
-    img = cv2.filter2D(img, -1, kernel)
-    return img
 
 
 def run_yolo(rgb_paths, out_dir: Path, weights: str, conf: float, imgsz: int):
@@ -119,17 +106,6 @@ def ss_detect(ss_paths, out_dir: Path, min_area: int = 4, min_h: int = 3,
         (out_dir / f"{p.stem}_detections.json").write_text(
             json.dumps({"pedestrians": peds, "count": len(peds)}, indent=2)
         )
-
-
-def compute_iou(a, b):
-    xA, yA = max(a[0], b[0]), max(a[1], b[1])
-    xB, yB = min(a[2], b[2]), min(a[3], b[3])
-    interW = max(0, xB - xA); interH = max(0, yB - yA)
-    inter = interW * interH
-    aA = (a[2] - a[0]) * (a[3] - a[1])
-    aB = (b[2] - b[0]) * (b[3] - b[1])
-    u = aA + aB - inter
-    return inter / u if u > 0 else 0.0
 
 
 def merge(rgb_paths, yolo_dir: Path, ss_dir: Path, out_json_dir: Path,
@@ -225,13 +201,8 @@ def main():
     merged_img  = args.out_root / "merged_img"
     merge(rgb_paths, yolo_dir, ss_det_dir, merged_json, merged_img, args.iou_thresh)
 
-    # 4) Copy merged_img to a canonical merged_images so intent script can find them
-    #    (the flow intent script wants merged_images with same names as merged JSONs)
-    #    - reuse merged_img itself but reset filename mapping:
-    #      merged_img filenames use RGB stem (e.g. 1539_0.png)
-
     here = Path(__file__).resolve().parent
-    # 5) Flow-based intent
+    # 4) Flow-based intent
     intent_flow = args.out_root / "intent_flow"
     vis_flow    = args.out_root / "vis_flow"
     subprocess.check_call([
@@ -243,7 +214,7 @@ def main():
         "--flow_thresh", str(args.flow_thresh),
     ])
 
-    # 6) Tracker-based intent
+    # 5) Tracker-based intent
     intent_tr = args.out_root / "intent_tracker"
     subprocess.check_call([
         sys.executable, str(here / "intent_tracker.py"),
@@ -253,7 +224,7 @@ def main():
         "--speed_thresh", str(args.speed_thresh),
     ])
 
-    # 7) Tracker-based viz
+    # 6) Tracker-based viz
     vis_tr = args.out_root / "vis_tracker"
     subprocess.check_call([
         sys.executable, str(here / "visualize_intent.py"),
@@ -262,7 +233,7 @@ def main():
         "--out_dir", str(vis_tr),
     ])
 
-    # 8) Aggregate summary
+    # 7) Aggregate summary
     summary = summarize(args.out_root, len(pairs))
     (args.out_root / "results_summary.json").write_text(json.dumps(summary, indent=2))
     print("\n== RESULTS ==")

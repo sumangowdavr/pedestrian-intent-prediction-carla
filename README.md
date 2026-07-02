@@ -8,7 +8,12 @@ stationary using either dense optical flow or IoU-based centroid speed.
 
 Course project for CSE 573 - Computer Vision and Image Processing,
 University at Buffalo, Spring 2025. Full write-up in
-[`docs/CVIP_final_report.docx`](docs/CVIP_final_report.docx).
+[`docs/CVIP_final_report.pdf`](docs/CVIP_final_report.pdf).
+
+![Tracker output on a real CARLA Town01 frame](outputs/real_run/sample_frames/tracker_frame_1650.png)
+
+*Tracker output on real CARLA Town01 data. Each pedestrian gets a track ID and
+a short-term intent label - green = moving, red = stationary - with pixel speed.*
 
 ## Pipeline
 
@@ -42,6 +47,7 @@ or intent classifier at any point.
 |-- LICENSE                          # MIT
 |-- requirements.txt
 |-- src/                             # all pipeline code lives here
+|   |-- common.py                    # Shared helpers (enhance_image, compute_iou)
 |   |-- detection_yolo.py            # Stage 1: YOLOv8 on RGB (CLAHE + sharpen)
 |   |-- detection_ss.py              # Stage 2: pedestrian mask on semantic seg
 |   |-- merge_detections.py          # Stage 3: IoU-based union of both streams
@@ -56,7 +62,7 @@ or intent classifier at any point.
 |-- docs/
 |   |-- DEMO.md                      # Synthetic-demo run instructions
 |   |-- REAL_DATA_RESULTS.md         # Real CARLA-run numbers and caveats
-|   `-- CVIP_final_report.docx       # Full course report
+|   `-- CVIP_final_report.pdf        # Full course report
 `-- outputs/
     |-- demo/                        # Synthetic demo outputs (committed)
     `-- real_run/                    # Real CARLA-slice outputs (committed)

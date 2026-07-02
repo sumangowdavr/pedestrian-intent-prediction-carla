@@ -10,15 +10,13 @@ import time
 from pathlib import Path
 
 import cv2
-import numpy as np
 from tqdm import tqdm
+
+from common import compute_iou
 
 #### CONFIGURATION #######################################
 # defaults; override via CLI or env vars
-DEFAULT_RGB_DIR = os.environ.get(
-    "RGB_DIR",
-    "data/Town01/Town01/generated/images_rgb",
-)
+DEFAULT_RGB_DIR = os.environ.get("RGB_DIR", "data/images_rgb")
 IMG_RGB_DIR    = Path(DEFAULT_RGB_DIR)
 YOLO_JSON_DIR  = Path("detections")
 SS_JSON_DIR    = Path("semantic_pedestrian_detections")
@@ -29,23 +27,6 @@ OUT_IMG_DIR    = Path("merged_images")
 OUT_CROP_DIR   = Path("crops_missing")
 
 IOU_THRESH     = 0.5
-
-#### UTILITIES ###########################################
-def compute_iou(boxA, boxB):
-    """
-    Compute Intersection-over-Union of two [x1,y1,x2,y2] boxes.
-    """
-    xA = max(boxA[0], boxB[0])
-    yA = max(boxA[1], boxB[1])
-    xB = min(boxA[2], boxB[2])
-    yB = min(boxA[3], boxB[3])
-    interW = max(0, xB - xA)
-    interH = max(0, yB - yA)
-    inter  = interW * interH
-    areaA  = (boxA[2] - boxA[0]) * (boxA[3] - boxA[1])
-    areaB  = (boxB[2] - boxB[0]) * (boxB[3] - boxB[1])
-    union  = areaA + areaB - inter
-    return inter / union if union > 0 else 0.0
 
 #### MAIN MERGE LOOP ####################################
 def parse_args():
@@ -159,35 +140,6 @@ def main():
             "total":   len(merged)
         })
 
-
-    #### LEGACY / FAILED ATTEMPTS (commented out) ###########
-    # """
-    # # --- Attempt #1: direct imread of SS-suffixed RGB frames (didn’t work) ---
-    # # img_fail = cv2.imread(str(IMG_RGB_DIR / f"{prefix}_{int(suffix)+10}.png"))
-    # # if img_fail is None:
-    # #     print(f"[WARN] Missing SS RGB frame for {frame}")
-
-    # # --- Attempt #2: warning missing SS detection JSON ---
-    # # if not ss_json_path.exists():
-    # #     print(f"[WARNING] Missing SS detection JSON for {ss_frame}, skipping.")
-
-    # # --- Attempt #3: brute-force prefix matching rglob (too slow) ---
-    # # for f in IMG_RGB_DIR.rglob("*.png"):
-    # #     if frame in f.stem:
-    # #         img = cv2.imread(str(f)); break
-
-    # # --- Attempt #4: merge via simple bbox union (duplicates!) ---
-    # # def merge_boxes(a, b):
-    # #     return [min(a[0],b[0]), min(a[1],b[1]), max(a[2],b[2]), max(a[3],b[3])]
-    # # merged_boxes = []
-    # # for y in yboxes:
-    # #     for s in missing:
-    # #         if compute_iou(y,s["bbox"])>0.3:
-    # #             merged_boxes.append(merge_boxes(y, s["bbox"]))
-
-    # # --- Attempt #5: filtering out “bins” by area threshold (killed small peds) ---
-    # # filtered = [d for d in yolo_peds if d["area"]>50]
-    # """
     # 10) write summary CSV
     with open("merged_summary.csv", "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=["frame","yolo","ss_only","total"])
