@@ -1,0 +1,25 @@
+{
+  "pedestrians": [
+    {
+      "bbox": [
+        287,
+        526,
+        316,
+        595
+      ],
+      "confidence": 0.393
+    },
+    {
+      "bbox": [
+        1040,
+        503,
+        1057,
+        555
+      ],
+      "confidence": 0.316
+    }
+  ],
+  "count": 2,
+  "n_yolo": 2,
+  "n_ss_only": 0
+}

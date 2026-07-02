@@ -50,7 +50,20 @@ pedestrian_intent_prediction/demo/merged_visual_intent_final/
 # GIFs are too large for git; MP4s are kept
 pedestrian_intent_prediction/demo/*.gif
 
+# real-data run: keep videos, summary, per-frame JSONs, samples;
+# skip the giant intermediate PNG folders
+pedestrian_intent_prediction/real_run/merged_img/
+pedestrian_intent_prediction/real_run/vis_flow/
+pedestrian_intent_prediction/real_run/vis_tracker/
+pedestrian_intent_prediction/real_run_sanity/
+
+# raw CARLA input data (many hundreds of MB)
+/data/images_rgb/
+/data/images_ss/
+
 # IDE / OS junk
 .vscode/
 .idea/
 .DS_Store
+# LibreOffice lock files
+.~lock.*#

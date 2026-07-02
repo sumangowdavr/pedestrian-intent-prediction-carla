@@ -1,0 +1,25 @@
+{
+  "frame": "1652_0",
+  "predictions": [
+    {
+      "bbox": [
+        288,
+        526,
+        315,
+        595
+      ],
+      "avg_flow": 0.335,
+      "intent": "stationary"
+    },
+    {
+      "bbox": [
+        1057,
+        504,
+        1067,
+        543
+      ],
+      "avg_flow": 4.002,
+      "intent": "moving"
+    }
+  ]
+}

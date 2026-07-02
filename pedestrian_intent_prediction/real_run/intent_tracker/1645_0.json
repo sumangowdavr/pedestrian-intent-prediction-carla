@@ -1,0 +1,27 @@
+{
+  "frame": "1645_0",
+  "predictions": [
+    {
+      "track_id": 0,
+      "bbox": [
+        288,
+        526,
+        315,
+        594
+      ],
+      "speed": 0.0,
+      "intent": "stationary"
+    },
+    {
+      "track_id": 1,
+      "bbox": [
+        1087,
+        505,
+        1100,
+        553
+      ],
+      "speed": 4.5,
+      "intent": "moving"
+    }
+  ]
+}

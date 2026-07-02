@@ -1,0 +1,60 @@
+{
+  "frame": "1657_0",
+  "predictions": [
+    {
+      "track_id": 0,
+      "bbox": [
+        287,
+        526,
+        315,
+        595
+      ],
+      "speed": 0.71,
+      "intent": "stationary"
+    },
+    {
+      "track_id": 5,
+      "bbox": [
+        1032,
+        505,
+        1040,
+        553
+      ],
+      "speed": 0.0,
+      "intent": "stationary"
+    },
+    {
+      "track_id": 6,
+      "bbox": [
+        1043,
+        513,
+        1045,
+        522
+      ],
+      "speed": 0.0,
+      "intent": "stationary"
+    },
+    {
+      "track_id": 7,
+      "bbox": [
+        1043,
+        526,
+        1044,
+        531
+      ],
+      "speed": 0.0,
+      "intent": "stationary"
+    },
+    {
+      "track_id": 8,
+      "bbox": [
+        1043,
+        542,
+        1045,
+        553
+      ],
+      "speed": 0.0,
+      "intent": "stationary"
+    }
+  ]
+}

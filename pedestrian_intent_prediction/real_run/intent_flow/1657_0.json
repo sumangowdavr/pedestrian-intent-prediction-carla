@@ -1,0 +1,55 @@
+{
+  "frame": "1657_0",
+  "predictions": [
+    {
+      "bbox": [
+        287,
+        526,
+        315,
+        595
+      ],
+      "avg_flow": 0.214,
+      "intent": "stationary"
+    },
+    {
+      "bbox": [
+        1032,
+        505,
+        1040,
+        553
+      ],
+      "avg_flow": 3.391,
+      "intent": "moving"
+    },
+    {
+      "bbox": [
+        1043,
+        513,
+        1045,
+        522
+      ],
+      "avg_flow": 1.912,
+      "intent": "moving"
+    },
+    {
+      "bbox": [
+        1043,
+        526,
+        1044,
+        531
+      ],
+      "avg_flow": 3.197,
+      "intent": "moving"
+    },
+    {
+      "bbox": [
+        1043,
+        542,
+        1045,
+        553
+      ],
+      "avg_flow": 4.332,
+      "intent": "moving"
+    }
+  ]
+}

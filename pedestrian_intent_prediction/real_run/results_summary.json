@@ -1,0 +1,12 @@
+{
+  "frames_paired": 23,
+  "yolo_detections": 30,
+  "ss_detections": 29,
+  "merged_detections": 52,
+  "ss_only_added_by_merge": 22,
+  "flow_moving": 28,
+  "flow_stationary": 22,
+  "tracker_moving": 20,
+  "tracker_stationary": 32,
+  "tracker_unique_track_ids": 9
+}
